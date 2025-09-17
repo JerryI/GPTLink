@@ -38,8 +38,8 @@ CreateType[GPTChatObject, {
 	"Endpoint" -> "https://api.openai.com", 
 	"Temperature" -> 0.7, 
 	"User", 
-	"APIToken" :> SystemCredential["OPENAI_API_KEY"], 
-	"Model" -> "gpt-4-turbo-preview", 
+	"APIToken" :> With[{x = SystemCredential["OPENAI_API_KEY"]}, If[MissingQ[x], "", x] ], 
+	"Model" -> "gpt-4o-mini", 
 	"MaxTokens" -> 70000, 
 	"TotalTokens" -> 0, 
 	"Tools" -> {}, 
@@ -144,10 +144,14 @@ Module[{
 }, 
 	url = URLBuild[{endpoint, "v1", "chat", "completions"}]; 
 	
-	headers = {
-		"Authorization" -> "Bearer " <> apiToken, 
-		"X-API-KEY" -> apiToken
-	}; 
+	headers = If[StringQ[apiToken] && TrueQ[StringLength[apiToken] > 0], 
+		{
+			"Authorization" -> "Bearer " <> apiToken, 
+			"X-API-KEY" -> apiToken
+		} 
+	,
+		{}
+	];
 	
 	messages = chat["Messages"]; 
 	
@@ -196,6 +200,7 @@ Module[{
 									$cbk = Function[$result,
 									  Do[
 										If[StringQ[$result[[ i]]], 
+											
 											Append[chat, <|
 												"role" -> "tool", 
 												"content" -> $result[[ i]], 
@@ -210,10 +215,18 @@ Module[{
 										];
 									  , {i, Length[$result ]}];
 
-									  If[secondCall === GPTChatComplete, 
-											secondCall[chat, opts], 
-											(*Else*)
-											secondCall[chat, callback, secondCall, opts]
+(* 									  Echo["GPTLink >> After tool calls >> Messages:"]; *)
+									  $logger[<||>]; 
+(* 									  Echo[chat["Messages"] // Length]; *)
+
+									  If[chat["MessagesLength"] =!= Length[chat["MessagesLength"] ],
+									  	chat["MessagesLength"] = Length[chat["MessagesLength"] ];
+(* 									  	Echo["GPTLink >> Subcall"]; *)
+										GPTChatCompleteAsync[chat, callback, opts];
+			
+									  ,
+(* 									  	Echo["GPTLink >> Nothing to do. No new messages"]; *)
+										callback[chat];
 									  ];
 									];
 									
@@ -221,18 +234,21 @@ Module[{
 								
 									toolHandler[chat["Messages"][[-1]], $cbk];
 								];
-								callback[chat];
+								
 								,
 								(*Else*)
 								callback[chat];
 							
 							, 
 							(*Else*)
+								$logger[<|"Error" -> "No messages provided in the reply"|>]; 
 								Message[GPTChatCompleteAsync::err, responseAssoc]; $Failed
 							], 
 						(*Else*)
+							$logger[<|"Error" -> "Response is not valid JSON"|>]; 
 							Message[GPTChatCompleteAsync::err, responseAssoc]; $Failed
 						], 
+						$logger[<|"Error" -> "Response code: "<>ToString[(#["StatusCode"])]|>]; 
 						$Failed
 					]
 				] ]
