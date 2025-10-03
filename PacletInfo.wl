@@ -19,10 +19,13 @@ PacletObject[
         }
       },
       {
-        "Documentation",
-        "Root" -> "Documentation",
-        "Language" -> "English"
-      }, 
+        "Javascript",
+        "Root" -> "JS"
+      },
+      {
+        "CSS",
+        "Root" -> "CSS"
+      },      
       {
         "Asset",
         "Assets" -> {
