@@ -22,12 +22,6 @@ Begin["`Private`"];
 $directory = 
 ParentDirectory[DirectoryName[$InputFileName]]; 
 
-(* TODO: replace me with proper declarations in PacletInfo.wl *)
-FrontEndRuntime[{"Modules", "css"}] = Append[FrontEndRuntime[{"Modules", "css"}], File[FileNameJoin[{$directory, "Assets", "chat.css"}] ] ];
-FrontEndRuntime[{"Modules", "js"}]  = Append[FrontEndRuntime[{"Modules", "js"}],  File[FileNameJoin[{$directory, "Assets", "chat.js"}] ] ];
-
-
-
 
 ChatView /: MakeBoxes[m: ChatView[a_GPTChatObject], StandardForm] := With[{messages = Unique["gptLink"]},
     messages = KeyTake[#, {"role", "content"}] &/@ (a["Messages"]);
