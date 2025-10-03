@@ -1,10 +1,10 @@
 PacletObject[
   <|
     "Name" -> "KirillBelov/GPTLink",
-    "Description" -> "Client to ChatGPT link APIs",
+    "Description" -> "Client to OpenAI-like APIs",
     "Creator" -> "Kirill Belov",
-    "Version" -> "1.0.6",
-    "WolframVersion" -> "14+",
+    "Version" -> "1.0.7",
+    "WolframVersion" -> "13.3+",
     "PublisherID" -> "KirillBelov",
     "License" -> "MIT",
     "PrimaryContext" -> "KirillBelov`GPTLink`",
@@ -13,7 +13,10 @@ PacletObject[
       {
         "Kernel",
         "Root" -> "Kernel",
-        "Context" -> {"KirillBelov`GPTLink`"}
+        "Context" -> {
+          {"KirillBelov`GPTLink`", "GPTLink.wl"},
+          {"KirillBelov`GPTLink`ChatView`", "ChatView.wl"}
+        }
       },
       {
         "Documentation",
@@ -23,7 +26,7 @@ PacletObject[
       {
         "Asset",
         "Assets" -> {
-          {"Images", "./Images"},
+          {"Assets", "./"},
           {"ReadMe", "README.md"}
         }
       }

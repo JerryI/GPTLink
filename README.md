@@ -1,11 +1,5 @@
 # GPTLink
 
-## Installation
-
-```mathematica
-PacletInstall["KirillBelov/GPTLink"]
-```
-
 ## Import
 
 ```mathematica
@@ -113,4 +107,15 @@ GPTChatComplete[chat, "Hi, what is date today?"]["Messages"]
         "name" -> "wolframAlpha", "tool_call_id" -> "call_mlXTrFY070v2kdJRaNgjcUBu"|>, 
     <|"role" -> "assistant", "content" -> "Today is Tuesday, April 9, 2024."|>
 }*)
+```
+
+## ChatView
+*Note, that this feature is only available for WLJS Notebook*
+
+Create a visual widget from chat object:
+
+```mathematica
+<<KirillBelov`GPTLink`ChatView`;
+
+ChatView[chatObject]
 ```
