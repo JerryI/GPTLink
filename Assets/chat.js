@@ -11,7 +11,8 @@ const makeMessage = (el, newMessages) => {
   });
 }
 
-core.ChatView = async (args, env) => {
+
+const chat = async (args, env) => {
   const messages = await interpretate(args[0], env);
   const channel  = await interpretate(args[1], env);
 
@@ -46,7 +47,7 @@ core.ChatView = async (args, env) => {
   makeMessage(env.element.firstChild.firstChild, messages);
 }
 
-core.ChatView.update = async (args, env) => {
+chat.update = async (args, env) => {
   const messages = await interpretate(args[0], env);
 
   const newMessages = messages.slice(env.local.length);
@@ -57,6 +58,12 @@ core.ChatView.update = async (args, env) => {
   makeMessage(env.element.firstChild.firstChild, newMessages);
 }
 
-core.ChatView.destroy = () => {}
+chat.destroy = (args, env) => {
+  env.element.firstChild.remove();
+  delete env.local.animation;
+  delete env.local.length;
+}
 
-core.ChatView.virtual = true //enable instancing and coupling
+chat.virtual = true //enable instancing and coupling
+
+core['KirillBelov`GPTLink`ChatView`Private`chatRenderer'] = chat;

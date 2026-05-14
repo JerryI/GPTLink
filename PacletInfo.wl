@@ -3,7 +3,7 @@ PacletObject[
     "Name" -> "KirillBelov/GPTLink",
     "Description" -> "Client to OpenAI-like APIs",
     "Creator" -> "Kirill Belov",
-    "Version" -> "1.0.7",
+    "Version" -> "1.0.8",
     "WolframVersion" -> "13.3+",
     "PublisherID" -> "KirillBelov",
     "License" -> "MIT",
@@ -20,11 +20,11 @@ PacletObject[
       },
       {
         "Javascript",
-        "Root" -> "JS"
+        "Root" -> {"Assets", "chat.js"}
       },
       {
         "CSS",
-        "Root" -> "CSS"
+        "Root" -> {"Assets", "chat.css"}
       },      
       {
         "Asset",

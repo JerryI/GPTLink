@@ -2,11 +2,9 @@
 
 BeginPackage["KirillBelov`GPTLink`ChatView`", {
     "KirillBelov`GPTLink`",
-    "JerryI`Misc`Events`",
-    "JerryI`Misc`Language`",
-    "JerryI`Misc`WLJS`Transport`",
-    "CoffeeLiqueur`Extensions`Boxes`",
-    "CoffeeLiqueur`Extensions`RuntimeTools`"
+    "CoffeeLiqueur`Misc`Events`",
+    "CoffeeLiqueur`Misc`WLJS`Transport`",
+    "CoffeeLiqueur`Extensions`Boxes`"
 }];
 
 ChatView::usage = 
@@ -15,9 +13,7 @@ ChatView::usage =
 Begin["`Private`"];
 
 
-(* ::Section:: *)
-(*Internal*)
-
+chatRenderer;
 
 $directory = 
 ParentDirectory[DirectoryName[$InputFileName]]; 
@@ -33,21 +29,29 @@ ChatView /: MakeBoxes[m: ChatView[a_GPTChatObject], StandardForm] := With[{messa
         ] ] ];
       ] ];
       
-      ViewBox[m, ChatView[messages // Offload, channel] ]
+      ViewBox[m, chatRenderer[messages // Offload, channel] ]
     ]
 ] /; TrueQ[Internal`Kernel`WLJSQ]
 
-ChatView /: MakeBoxes[m: ChatView[a_GPTChatObject], StandardForm] := With[{
-    msg = Style["This feature is only available in WLJS Notebook. See https://wljs.io/", Background->Yellow]
-},
-    MakeBoxes[msg, StandardForm]
+ChatView /: MakeBoxes[m: ChatView[a_GPTChatObject], WLXForm] := With[{messages = Unique["gptLink"]},
+    messages = KeyTake[#, {"role", "content"}] &/@ (a["Messages"]);
+
+    With[{channel = CreateUUID[]},
+      EventHandler[channel, Function[prompt, With[{decoded = URLDecode[prompt]},
+        GPTChatCompleteAsync[a, decoded, Function[data,
+            messages = KeyTake[#, {"role", "content"}] &/@ a["Messages"]
+        ] ] ];
+      ] ];
+      
+      chatRenderer[messages // Offload, channel] // CreateFrontEndObject
+    ]
 ]
 
-(* ::Section:: *)
-(*Package Footer*)
+ChatView /: MakeBoxes[m: ChatView[a_GPTChatObject], form_] := With[{},
+    Echo["This feature is only available in WLJS Notebook. See https://wljs.io/"];
+    MakeBoxes[$Failed, form]
+]
 
 
 End[];
-
-
 EndPackage[];
